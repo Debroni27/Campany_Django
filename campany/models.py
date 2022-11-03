@@ -37,8 +37,8 @@ class Departament(MPTTModel):
     class MPTTMeta:
         order_insertion_by = ['name']
 
-    def __str__(self):
-        return f'Департамент: {self.name}'
-
     def get_absolute_url(self):
-        return reverse('employee', args=[str(self.slug)])
+        return reverse('employee-by-departament', args=[str(self.slug)])
+
+    def __str__(self):
+        return f'{self.name}'

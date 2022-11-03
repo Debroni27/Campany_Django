@@ -15,3 +15,6 @@
     docker-compose up test
 
 Запуск линтера (flaske8)
+
+
+python manage.py dumpdata campany --indent 2 > fixture.json

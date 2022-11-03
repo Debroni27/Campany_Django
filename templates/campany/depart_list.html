@@ -1,15 +1,14 @@
 {% extends "campany/base.html" %}
 {% load mptt_tags %}
-
 {% block title %}Список департаментов{% endblock %}
 
 {% block content %}
 
 <div>
     <div>
-	<ul>
+	<ul class="list-group">
 	{% recursetree object_list %}
-	    <li>
+	    <li class="list-group-item">
 		<a href="{{node.get_absolute_url}}">{{node.name}}</a>
 		{% if not node.is_leaf_node %}
                 <ul class="children">
