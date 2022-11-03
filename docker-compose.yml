@@ -1,0 +1,32 @@
+version: '3.9'
+
+services:
+  postgres:
+    container_name: postgres_container
+    image: postgres:15
+    environment:
+      LC_ALL: C.UTF-8
+      POSTGRES_DB: ${NAME}
+      POSTGRES_USER: ${USER}
+      POSTGRES_PASSWORD: ${PASSWORD}
+      POSTGRES_HOST_AUTH_METHOD: ${METHOD}
+    command: postgres -N 512
+    volumes:
+       - postgres:/data/postgres
+    ports:
+      - "${PORT}:5432"
+    networks:
+      - postgres
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        "max-size": "1m"
+        "max-file": "5"
+
+networks:
+  postgres:
+    driver: bridge
+
+volumes:
+    postgres:
