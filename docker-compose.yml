@@ -1,8 +1,31 @@
 version: '3.9'
 
 services:
-  postgres:
-    container_name: postgres_container
+  web:
+    container_name: web
+    build:
+      context: .
+      dockerfile: DockerFile
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/code
+    networks:
+      - djangonetwork
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        "max-size": "1m"
+        "max-file": "5"
+    links:
+      - db:db
+    depends_on:
+      - db
+
+  db:
+    container_name: db
     image: postgres:15
     environment:
       LC_ALL: C.UTF-8
@@ -12,11 +35,11 @@ services:
       POSTGRES_HOST_AUTH_METHOD: ${METHOD}
     command: postgres -N 512
     volumes:
-       - postgres:/data/postgres
-    ports:
-      - "${PORT}:5432"
+       - db:/data/postgres
+    expose:
+      - ${POSTGRES_PORT}
     networks:
-      - postgres
+      - djangonetwork
     restart: unless-stopped
     logging:
       driver: "json-file"
@@ -24,9 +47,24 @@ services:
         "max-size": "1m"
         "max-file": "5"
 
+  test:
+    container_name: test
+    build:
+      context: .
+      dockerfile: DockerFile
+    command: python manage.py test
+    volumes:
+      - .:/app
+    links:
+      - db:db
+    depends_on:
+      - db
+
 networks:
-  postgres:
+  djangonetwork:
     driver: bridge
 
 volumes:
-    postgres:
+    web:
+    db:
+    test:
