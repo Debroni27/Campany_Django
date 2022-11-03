@@ -24,10 +24,12 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     #сторонние библиотеки
-
+    'mptt',
+    'django_mptt_admin',
 
     #мои приложения
     'campany',
+
 
 ]
 
@@ -46,7 +48,7 @@ ROOT_URLCONF = 'core.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
