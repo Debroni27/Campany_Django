@@ -9,14 +9,3 @@ class DepartamentListView(ListView):
     queryset = DepartamentRepository.fetch_all_departaments()
     paginate_by = 30
 
-
-# class EmployeeByDepartment(ListView):
-#     """
-#         Отображает список работников
-#         конткертного подразделения
-#     """
-#     context_object_name = 'employees'
-#     template_name = 'campany/depart_list.html'
-#     paginate_by = 50
-#     def get_queryset(self):
-#         return EmployeeRepository.fetch_all_employee()

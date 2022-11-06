@@ -11,5 +11,8 @@ class DepartamentRepository:
     @staticmethod
     def fetch_all_departaments():
         return Departament.objects.prefetch_related(
-            Prefetch("employee_departament", Employee.objects.filter(departament__in=[1,2,3,4,5]))
+            Prefetch(
+                "employee_departament",
+                Employee.objects.filter(departament__in=[1, 2])
+            )
         )
