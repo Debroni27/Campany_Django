@@ -1,9 +1,9 @@
+from django.conf import settings
+from django.urls import path, include
 
-from django.urls import path
-
-from campany.views import DepartamentListView, EmployeeByDepartment
+from campany.views import DepartamentListView
 
 urlpatterns = [
     path('', DepartamentListView.as_view(), name='departament-list'),
-    path('<str:slug>/', EmployeeByDepartment.as_view(), name='employee-by-departament')
 ]
+

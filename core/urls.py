@@ -1,12 +1,18 @@
-
+from django.conf import settings
 from django.contrib import admin
 from django.urls import path, include
 
-
-from campany.views import DepartamentListView, EmployeeByDepartment
-
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', DepartamentListView.as_view(), name='departament-list'),
-    path('<str:slug>/', EmployeeByDepartment.as_view(), name='employee-by-departament')
+    path('', include("campany.urls")),
+
 ]
+
+if settings.DEBUG:
+    import debug_toolbar
+    urlpatterns = [
+        path('__debug__/', include(debug_toolbar.urls)),
+    ] + urlpatterns
+
+    import mimetypes
+    mimetypes.add_type("application/javascript", ".js", True)
