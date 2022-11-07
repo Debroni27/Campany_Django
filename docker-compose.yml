@@ -102,7 +102,7 @@ services:
     links:
       - db:db
     depends_on:
-      - db
+      - web
     logging:
       driver: "json-file"
       options:
