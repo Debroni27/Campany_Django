@@ -38,9 +38,51 @@ services:
        - db:/data/postgres
     expose:
       - ${POSTGRES_PORT}
+
+    ports:
+      - "${POSTGRES_PORT}:${POSTGRES_PORT}"
     networks:
       - djangonetwork
     restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        "max-size": "1m"
+        "max-file": "5"
+
+  filldb:
+    build:
+      context: .
+      dockerfile: DockerFile
+    command: bash -c "python manage.py migrate && python manage.py loaddata fixture.json"
+    volumes:
+      - .:/code
+    networks:
+      - djangonetwork
+    links:
+      - db:db
+    depends_on:
+      - web
+    logging:
+      driver: "json-file"
+      options:
+        "max-size": "1m"
+        "max-file": "5"
+
+  linter:
+    container_name: linter
+    build:
+      context: .
+      dockerfile: DockerFile
+    command: bash -c "pip install -r requirements-dev.txt && flake8 --max-line-length 120 --exclude migrations,venv,manage.py"
+    volumes:
+      - .:/code
+    networks:
+      - djangonetwork
+    links:
+      - db:db
+    depends_on:
+      - web
     logging:
       driver: "json-file"
       options:
@@ -55,10 +97,17 @@ services:
     command: python manage.py test
     volumes:
       - .:/app
+    networks:
+      - djangonetwork
     links:
       - db:db
     depends_on:
       - db
+    logging:
+      driver: "json-file"
+      options:
+        "max-size": "1m"
+        "max-file": "5"
 
 networks:
   djangonetwork:
@@ -68,3 +117,5 @@ volumes:
     web:
     db:
     test:
+    linter:
+    filldb:

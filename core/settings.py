@@ -11,7 +11,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.environ['SECRET_KEY']
 
-DEBUG = True
+DEBUG = os.environ['DEBUG']
 
 ALLOWED_HOSTS = ["*"]
 
@@ -23,13 +23,13 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    #сторонние библиотеки
+    # сторонние библиотеки
     'mptt',
     'django_mptt_admin',
     'debug_toolbar',
 
-    #мои приложения
-    'campany',
+    # мои приложения
+    'campany.apps.CampanyConfig',
 
 
 ]

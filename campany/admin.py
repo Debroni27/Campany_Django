@@ -1,8 +1,31 @@
 from django.contrib import admin
+from django.core.cache import cache
+from django.core.paginator import Paginator
 from django_mptt_admin.admin import DjangoMpttAdmin
 
 from campany.models import Employee, Departament
-from campany.repositories import DepartamentRepository
+
+
+# Оптимизация запроса orm
+class CachingPaginator(Paginator):
+    def _get_count(self):
+
+        if not hasattr(self, "_count"):
+            self._count = None
+
+        if self._count is None:
+            try:
+                key = "adm:{0}:count".format(hash(self.object_list.query.__str__()))
+                self._count = cache.get(key, -1)
+                if self._count == -1:
+                    self._count = super().count
+                    cache.set(key, self._count, 3600)
+
+            except:
+                self._count = len(self.object_list)
+        return self._count
+
+    count = property(_get_count)
 
 
 @admin.register(Employee)
@@ -15,13 +38,11 @@ class EmployeeAdmin(admin.ModelAdmin):
             "hire_date",
             "departament",
     )
-    list_editable = (
-            "departament",
-    )
     list_per_page = 50
     list_display_links = ("first_name",)
-    sortable_by = list_display
-    save_on_top = True
+    list_select_related = ['departament']
+    show_full_result_count = False
+    paginator = CachingPaginator
 
 
 @admin.register(Departament)
@@ -36,7 +57,7 @@ class DepartamentAdmin(DjangoMpttAdmin):
         Надо очищать local storage
         https://github.com/mbraak/django-mptt-admin/issues/256
     """
+    show_full_result_count = False
+    paginator = CachingPaginator
 
-    def get_queryset(self, request):
-        return DepartamentRepository.fetch_all_departaments()
 
